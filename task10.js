@@ -1,17 +1,19 @@
 function checkBrackets(str) {
-    const brackets = {
-        '(': ')',
-        '{': '}',
-        '[': ']'
+    const stack = [];
+    const openingBrackets = ['(', '[', '{'];
+    const closingBrackets = [')', ']', '}'];
+    const bracketPairs = {
+        ')': '(',
+        ']': '[',
+        '}': '{'
     };
 
-    let stack = [];
-
     for (let char of str) {
-        if (brackets[char]) {
-            stack.push(brackets[char]);
-        } else if ([')', '}', ']'].includes(char)) {
-            if (stack.pop() !== char) {
+        if (openingBrackets.includes(char)) {
+            stack.push(char);
+        } else if (closingBrackets.includes(char)) {
+            const lastOpeningBracket = stack.pop();
+            if (lastOpeningBracket !== bracketPairs[char]) {
                 return false;
             }
         }
@@ -20,8 +22,9 @@ function checkBrackets(str) {
     return stack.length === 0;
 }
 
-
-console.log(checkBrackets("()"));  
-console.log(checkBrackets("({})"));  
-console.log(checkBrackets("({)}"));  
-console.log(checkBrackets("({")); 
+console.log(checkBrackets("function someFn() { return (1 + 2); }")); // true
+console.log(checkBrackets("function someFn() { return (1 + 2; }")); // false
+console.log(checkBrackets("function someFn() { return [1 + 2]; }")); // true
+console.log(checkBrackets("function someFn() { return [1 + 2); }")); // false
+console.log(checkBrackets("function someFn() { return {a: 1, b: 2}; }")); // true
+console.log(checkBrackets("function someFn() { return {a: 1, b: 2]; }")); // false
